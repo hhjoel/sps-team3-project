@@ -18,13 +18,15 @@ function getLoginStatus() {
     fetch('/login').then(response => response.json()).then((loginStatus) => {
         console.log(loginStatus);
         const loginElement = document.getElementById('login');
+        const groupElement = document.getElementById('groups');
         loginElement.innerHTML = '<h4>Login Status: '+ loginStatus.loginStatus + '</h4>';
         if (loginStatus.loginStatus){
                 loginElement.innerHTML = '<h4> Hello, ' + loginStatus.userEmail + '!</h4>'
                 loginElement.appendChild(createRedirectButtonElement(loginStatus.logoutUrl, 'logout'));
+                groupElement.style.display = "block";
         }
         else {
-            loginElement.innerHTML = '<h4> Log in to leave your comment!</h4>'
+            loginElement.innerHTML = '<h4> Log in to view your groups </h4>'
             loginElement.appendChild(createRedirectButtonElement(loginStatus.loginUrl, 'login'));
         }
     })
@@ -38,4 +40,14 @@ function createRedirectButtonElement(redirectUrl, buttonText) {
         window.location.href = redirectUrl;
     });
     return buttonElement;
+}
+
+function createGroupForm() {
+    var modal = document.getElementById("groupModal");
+    modal.style.display = "block";
+}
+
+function closeGroupForm() {
+    var modal=document.getElementById("groupModal");
+    modal.style.display ="none";
 }

@@ -17,6 +17,35 @@
 
      <div id="login"></div>
 
+     <div id="groups">
+
+        <button id="create-group" onclick="createGroupForm()">Create a new group </button>
+
+        <!-- The Modal -->
+        <div id="groupModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <form action="/data" method="POST" class="form-container">
+                    <h1> Create A New Group</h1>
+                    <label for="GroupName"><b>Group Name</b></label>
+                    <input type="text" placeholder="Enter Group Name" name="groupName" required>
+                    <label for="TeamMembers"><b>Team Members</b></label>
+                    <input type="text" placeholder="Enter Team member's email: using ';' to separate different members" name="teamMembers">
+                    <button type="submit" class="btn">Create</button>
+                    <button type="button" class="btn cancel" onclick="closeGroupForm()">Close</button> 
+                </form>
+            </div>
+
+        </div>
+
+        <div id="data">
+            <h3>Your groups:</h3>
+            <div id="group-list"></div>
+        </div>
+
+    </div>
+
   </body>
 
 </html>
