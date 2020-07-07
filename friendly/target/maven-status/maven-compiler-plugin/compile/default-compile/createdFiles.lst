@@ -1,1 +1,8 @@
+com/google/sps/Restaurant.class
 com/google/sps/App.class
+com/google/sps/Name.class
+com/google/sps/InvalidNameException.class
+com/google/sps/User.class
+com/google/sps/Email.class
+com/google/sps/LocationEnum.class
+com/google/sps/Location.class
