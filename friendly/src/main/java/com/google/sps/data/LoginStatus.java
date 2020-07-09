@@ -14,7 +14,7 @@
 
 package com.google.sps.data;
 
-/** A comment message. */
+/** Login status class */
 public final class LoginStatus {
 
   public boolean loginStatus;
