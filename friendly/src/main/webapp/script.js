@@ -24,10 +24,12 @@ function getLoginStatus() {
                 loginElement.innerHTML = '<h4> Hello, ' + loginStatus.userEmail + '!</h4>'
                 loginElement.appendChild(createRedirectButtonElement(loginStatus.logoutUrl, 'logout'));
                 groupElement.style.display = "block";
+                getUserGroups();
         }
         else {
             loginElement.innerHTML = '<h4> Log in to view your groups </h4>'
             loginElement.appendChild(createRedirectButtonElement(loginStatus.loginUrl, 'login'));
+            groupElement.style.display = "none";
         }
     })
 

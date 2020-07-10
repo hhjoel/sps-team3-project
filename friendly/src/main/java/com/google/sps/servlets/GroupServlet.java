@@ -47,7 +47,14 @@ public class GroupServlet extends HttpServlet {
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
     UserService userService = UserServiceFactory.getUserService();
+
+    // user not logged in, do not have groups
+    if (!userService.isUserLoggedIn()){
+        response.sendError(403, "Not authorized to comment.");
+        return;
+    }
     String ownerId = userService.getCurrentUser().getUserId();
+    
 
 	Query query = new Query("Group")
         .setFilter(new FilterPredicate("teamMembers", FilterOperator.EQUAL, ownerId));
