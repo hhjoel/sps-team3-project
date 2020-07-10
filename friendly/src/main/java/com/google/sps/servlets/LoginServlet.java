@@ -18,7 +18,7 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import com.google.gson.Gson;
+import com.google.sps.servlets.JsonUtility;
 import com.google.sps.data.LoginStatus;
 
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
         String loginUrl = userService.createLoginURL("/");
         loginStatus.loginStatus = false;
         loginStatus.loginUrl = loginUrl;
-        String json = convertToJsonUsingGson(loginStatus);
+        String json = JsonUtility.convertToJsonUsingGson(loginStatus);
         out.println(json);
       return;
     }
@@ -56,18 +56,8 @@ public class LoginServlet extends HttpServlet {
     // User is logged in and has a nickname, so the request can proceed
     String logoutUrl = userService.createLogoutURL("/");
     loginStatus.logoutUrl = logoutUrl;
-    String json = convertToJsonUsingGson(loginStatus);
+    String json = JsonUtility.convertToJsonUsingGson(loginStatus);
     out.println(json);
 
-  }
-
-   /**
-   * Converts a ServerStats instance into a JSON string using the Gson library. Note: We first added
-   * the Gson library dependency to pom.xml.
-   */
-  private String convertToJsonUsingGson(LoginStatus loginStatus) {
-    Gson gson = new Gson();
-    String json = gson.toJson(loginStatus);
-    return json;
   }
 }

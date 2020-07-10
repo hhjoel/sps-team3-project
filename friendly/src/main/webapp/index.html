@@ -12,7 +12,7 @@
     <script src="script.js"></script>
   </head>
 
-  <body onload="getLoginStatus();">
+  <body onload="getLoginStatus();getUserGroups();">
     <h1> Landing Page </h1>
 
      <div id="login"></div>
@@ -26,7 +26,7 @@
 
             <!-- Modal content -->
             <div class="modal-content">
-                <form action="/data" method="POST" class="form-container">
+                <form action="/group" method="POST" class="form-container">
                     <h1> Create A New Group</h1>
                     <label for="GroupName"><b>Group Name</b></label>
                     <input type="text" placeholder="Enter Group Name" name="groupName" required>
@@ -40,8 +40,7 @@
         </div>
 
         <div id="data">
-            <h3>Your groups:</h3>
-            <div id="group-list"></div>
+            <select id="groups-list" />
         </div>
 
     </div>

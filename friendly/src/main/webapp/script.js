@@ -33,6 +33,24 @@ function getLoginStatus() {
 
 }
 
+/**
+ * This function will query user's group list
+ */
+function getUserGroups() {
+    fetch('/group').then(response => response.json()).then((groupList) => {
+        const groupData = document.getElementById("data");
+        if (groupList.length === 0) {
+            groupData.innerHTML = '<h3>No groups Yet</h3>';
+        }
+        else {
+            groupData.innerHTML = ('<h4>Your groups: </h4>');
+            groupDropdown = document.createElement('select');
+            groupList.map(group => createDropdown(group)).map(element => groupDropdown.appendChild(element));
+            groupData.appendChild(groupDropdown);
+        }
+    })
+}
+
 function createRedirectButtonElement(redirectUrl, buttonText) {
     const buttonElement = document.createElement('button');
     buttonElement.innerText = buttonText;
@@ -50,4 +68,10 @@ function createGroupForm() {
 function closeGroupForm() {
     var modal=document.getElementById("groupModal");
     modal.style.display ="none";
+}
+
+function createDropdown(text) {
+    const dropdownElement = document.createElement('option');
+    dropdownElement.innerText = text;
+    return dropdownElement;
 }
