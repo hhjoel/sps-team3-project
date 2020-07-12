@@ -53,10 +53,10 @@ public class GroupServlet extends HttpServlet {
         response.sendError(403, "Not authorized to comment.");
         return;
     }
-    String ownerId = userService.getCurrentUser().getUserId();
+    String ownerEmail = userService.getCurrentUser().getEmail();
     
     Query query = new Query("Group")
-        .setFilter(new FilterPredicate("teamMembers", FilterOperator.EQUAL, ownerId));
+        .setFilter(new FilterPredicate("teamMembers", FilterOperator.EQUAL, ownerEmail));
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
@@ -80,7 +80,7 @@ public class GroupServlet extends HttpServlet {
     String ownerEmail = userService.getCurrentUser().getEmail();
     String teamMembers = getParameter(request, "teamMembers");
     ArrayList<String> members = new ArrayList<String>(Arrays.asList(teamMembers.split(";")));
-    members.add(ownerId);
+    members.add(ownerEmail);
 
     if (!groupName.isEmpty()) {
         long timestamp = System.currentTimeMillis();
