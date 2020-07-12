@@ -19,17 +19,17 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.PreparedQuery;
 
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import com.google.gson.Gson;
+import com.google.sps.servlets.JsonUtility;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -55,8 +55,7 @@ public class GroupServlet extends HttpServlet {
     }
     String ownerId = userService.getCurrentUser().getUserId();
     
-
-	Query query = new Query("Group")
+    Query query = new Query("Group")
         .setFilter(new FilterPredicate("teamMembers", FilterOperator.EQUAL, ownerId));
     
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

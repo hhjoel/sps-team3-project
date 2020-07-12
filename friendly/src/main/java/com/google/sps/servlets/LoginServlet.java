@@ -18,8 +18,9 @@ import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
-import com.google.sps.servlets.JsonUtility;
 import com.google.sps.data.LoginStatus;
+
+import com.google.sps.servlets.JsonUtility;
 
 import java.io.IOException;
 import java.io.PrintWriter;
