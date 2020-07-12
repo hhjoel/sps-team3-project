@@ -1,1 +1,50 @@
-<h1> Landing Page </h1>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <title>Friendly</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+
+  <body onload="getLoginStatus();">
+    <h1> Landing Page </h1>
+
+     <div id="login"></div>
+
+     <div id="groups">
+
+        <button id="create-group" onclick="createGroupForm()">Create a new group </button>
+
+        <!-- The Modal -->
+        <div id="groupModal" class="modal">
+
+            <!-- Modal content -->
+            <div class="modal-content">
+                <form action="/group" method="POST" class="form-container">
+                    <h1> Create A New Group</h1>
+                    <label for="GroupName"><b>Group Name</b></label>
+                    <input type="text" placeholder="Enter Group Name" name="groupName" required>
+                    <label for="TeamMembers"><b>Team Members</b></label>
+                    <input type="text" placeholder="Enter Team member's email: using ';' to separate different members" name="teamMembers">
+                    <button type="submit" class="btn">Create</button>
+                    <button type="button" class="btn cancel" onclick="closeGroupForm()">Close</button> 
+                </form>
+            </div>
+
+        </div>
+
+        <div id="data">
+            <select id="groups-list" />
+        </div>
+
+    </div>
+
+  </body>
+
+</html>
