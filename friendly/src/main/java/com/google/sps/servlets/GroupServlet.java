@@ -80,6 +80,18 @@ public class GroupServlet extends HttpServlet {
     String ownerEmail = userService.getCurrentUser().getEmail();
     String teamMembers = getParameter(request, "teamMembers");
     ArrayList<String> members = new ArrayList<String>(Arrays.asList(teamMembers.split(";")));
+    for(int i = 0; i < members.size(); i++) {   
+        System.out.println(i + members.get(i));
+    }  
+    response.setContentType("text/plain;charset=UTF-8");
+    for (String userEmail: members) {
+        if (!validateGroupUser(userEmail)) {
+            // response.getWriter().println(userEmail); 
+            response.getWriter().println("Invalid"); 
+            return; 
+        }
+    }
+    response.getWriter().println("valid"); 
     members.add(ownerEmail);
 
     if (!groupName.isEmpty()) {
@@ -92,9 +104,6 @@ public class GroupServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(groupEntity);
     }
-    // Redirect back to the HTML page.
-    // 
-    response.sendRedirect("/index.html");
   }
 
 /**
@@ -103,6 +112,18 @@ public class GroupServlet extends HttpServlet {
   private String getParameter(HttpServletRequest request, String name) {      
       String parameter = request.getParameter(name);
       return parameter;
+  }
+
+/**
+  * Check whether a userEmail is valid (the user is in the datastore)
+  */
+  private boolean validateGroupUser(String userEmail) {
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("User")
+        .setFilter(new FilterPredicate("userEmail", FilterOperator.EQUAL, userEmail));
+    PreparedQuery results = datastore.prepare(query);
+    return results.countEntities() != 0;
   }
 
 }
