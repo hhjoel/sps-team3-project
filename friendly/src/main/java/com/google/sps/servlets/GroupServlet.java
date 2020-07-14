@@ -81,10 +81,9 @@ public class GroupServlet extends HttpServlet {
     String teamMembers = getParameter(request, "teamMembers");
     ArrayList<String> members = new ArrayList<String>(Arrays.asList(teamMembers.split(";")));
     response.setContentType("text/plain;charset=UTF-8");
-    
+
     for (String userEmail: members) {
         if (!validateGroupUser(userEmail)) {
-            // response.getWriter().println(userEmail); 
             response.getWriter().println("Invalid"); 
             return; 
         }
