@@ -39,11 +39,42 @@
 
         </div>
 
+
         <div id="data">
-            <select id="groups-list" />
+            <select id="groups-list"></select>
         </div>
 
+        <div id="recommendation-container">
+            <button id="add-recommendation" onclick="createRecommendationForm()">Add New Recommendation</button>
+            <div id="recommendationModal" class="modal">
+                <div class="modal-content">
+                    <form action="/recommendation" method="POST" class="form-container">
+                        <h1> Recommend a new restaurant </h1>
+                        <label for="RestaurantName"><b>Restaurant Name</b></label>
+                        <input type="hidden" name="groupId" id="groupIdInput">
+                        <input type="hidden" name="userEmail" id="userEmailInput">
+                        <input type="text" placeholder="Enter Restaurant Name" name="restaurantName" required>
+                        <label for="Location"><b>Location  </b></label>
+                        <select name="location">
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                        <br>
+                        <button type="submit" class="btn">Add Recommendation</button>
+                        <button type="button" class="btn cancel" onclick="closeRecommendationForm()">Close</button> 
+                    </form>
+                </div>
+            </div>
+            <div id="recommendation-list"></div>
+        </div>
     </div>
+
+
+        
+        
+
 
   </body>
 

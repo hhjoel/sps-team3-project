@@ -19,12 +19,14 @@ function getLoginStatus() {
         console.log(loginStatus);
         const loginElement = document.getElementById('login');
         const groupElement = document.getElementById('groups');
+        
         loginElement.innerHTML = '<h4>Login Status: '+ loginStatus.loginStatus + '</h4>';
         if (loginStatus.loginStatus){
                 loginElement.innerHTML = '<h4> Hello, ' + loginStatus.userEmail + '!</h4>'
                 loginElement.appendChild(createRedirectButtonElement(loginStatus.logoutUrl, 'logout'));
                 groupElement.style.display = "block";
-                getUserGroups();
+                document.getElementById('userEmailInput').value = loginStatus.userEmail;
+                getUserGroups(loginStatus.userEmail);
         }
         else {
             loginElement.innerHTML = '<h4> Log in to view your groups </h4>'
@@ -38,7 +40,7 @@ function getLoginStatus() {
 /**
  * This function will query user's group list
  */
-function getUserGroups() {
+function getUserGroups(userEmail) {
     fetch('/group').then(response => response.json()).then((groupList) => {
         const groupData = document.getElementById("data");
         if (groupList.length === 0) {
@@ -47,8 +49,11 @@ function getUserGroups() {
         else {
             groupData.innerHTML = ('<h4>Your groups: </h4>');
             groupDropdown = document.createElement('select');
+            groupDropdown.setAttribute("id", "groupId");
+            groupDropdown.setAttribute("onchange","getRecommendationContainer()"); //this is not working
             groupList.map(group => createDropdown(group)).map(element => groupDropdown.appendChild(element));
             groupData.appendChild(groupDropdown);
+            getRecommendationContainer();
         }
     })
 }
@@ -76,4 +81,57 @@ function createDropdown(text) {
     const dropdownElement = document.createElement('option');
     dropdownElement.innerText = text;
     return dropdownElement;
+}
+
+function createRecommendationForm() {
+    var modal = document.getElementById("recommendationModal");
+    modal.style.display = "block";
+}
+
+function closeRecommendationForm() {
+    var modal=document.getElementById("recommendationModal");
+    modal.style.display = "none";
+}
+
+/**
+ * This function will show the recommendation container: recommendation list and add recommendation button
+ */
+function getRecommendationContainer() {
+
+    //Get selected groupid & pass to recommendation form as hidden input 
+    groupList = document.getElementById('groupId')
+    if (groupList != null) {
+        groupId = groupList.options[groupList.selectedIndex].text;
+        document.getElementById('groupIdInput').value = groupId;
+        document.getElementById('recommendation-container').style.display = "block";
+        getRecommendations()
+    }
+}
+
+/**
+ * This function will query the group's recommendations
+ */
+function getRecommendations() {
+
+    //Retrieve the groupId & userEmail
+    groupId = document.getElementById('groupIdInput').value;
+    userEmail = document.getElementById('userEmailInput').value;
+
+    //Adding groupId to Query String
+    query = '/recommendation' + '?userEmail=' + userEmail + '&groupId='+ groupId ;
+    
+    fetch(query).then(response => response.json()).then(recommendations => { 
+
+        const recommendationElement = document.getElementById("recommendation-list");
+        recommendationElement.innerHTML = "";
+
+        //Convert each recommendation to html list
+        recommendations.forEach(text => {
+        const liElement = document.createElement('li');
+        liElement.innerText = text;
+        recommendationElement.append(liElement);
+      });
+        
+    }); 
+
 }
