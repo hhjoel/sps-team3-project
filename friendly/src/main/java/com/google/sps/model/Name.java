@@ -1,4 +1,4 @@
-package com.google.sps;
+package com.google.sps.model;
 
 /**
  * Represents a Restaurant's name
