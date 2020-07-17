@@ -15,11 +15,13 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
-
-import com.google.sps.data.LoginStatus;
-
+import com.google.sps.model.LoginStatus;
 import com.google.sps.servlets.JsonUtility;
 
 import java.io.IOException;
@@ -53,6 +55,20 @@ public class LoginServlet extends HttpServlet {
     loginStatus.loginStatus = true;
     String userEmail = userService.getCurrentUser().getEmail();
     loginStatus.userEmail = userEmail;
+
+    /**
+     *If the user is not in the datastore, put the user into the datastore 
+     *thus the user could be inside a group 
+     */
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("User")
+        .setFilter(new FilterPredicate("userEmail", FilterOperator.EQUAL, userEmail));
+    PreparedQuery results = datastore.prepare(query);
+    if (results.countEntities() == 0) {
+        Entity userEntity = new Entity("User");
+        userEntity.setProperty("userEmail", userEmail);
+        datastore.put(userEntity);
+    }
 
     // User is logged in and has a nickname, so the request can proceed
     String logoutUrl = userService.createLogoutURL("/");
