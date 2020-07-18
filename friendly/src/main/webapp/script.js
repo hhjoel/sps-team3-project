@@ -50,7 +50,7 @@ function getUserGroups(userEmail) {
             groupData.innerHTML = ('<h4>Your groups: </h4>');
             groupDropdown = document.createElement('select');
             groupDropdown.setAttribute("id", "groupId");
-            groupDropdown.setAttribute("onchange","getRecommendationContainer()"); //this is not working
+            groupDropdown.setAttribute("onchange","getRecommendationContainer()"); 
             groupList.map(group => createDropdown(group)).map(element => groupDropdown.appendChild(element));
             groupData.appendChild(groupDropdown);
             getRecommendationContainer();
