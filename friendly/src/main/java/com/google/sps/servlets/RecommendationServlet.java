@@ -42,10 +42,12 @@ public class RecommendationServlet extends HttpServlet {
         //Add new restaurant to datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity reccomendationEntity = new Entity("Recommendations");
+        long timestamp = System.currentTimeMillis();
         reccomendationEntity.setProperty("groupName", groupName); 
         reccomendationEntity.setProperty("userEmail", userService.getCurrentUser().getEmail());
         reccomendationEntity.setProperty("restaurantName", restaurantName.getName());
         reccomendationEntity.setProperty("location", location.getLocation());
+        reccomendationEntity.setProperty("timestamp", timestamp);
         datastore.put(reccomendationEntity);
 
         // Redirect back to the HTML page.

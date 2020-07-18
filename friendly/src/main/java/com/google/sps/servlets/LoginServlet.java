@@ -66,7 +66,9 @@ public class LoginServlet extends HttpServlet {
     PreparedQuery results = datastore.prepare(query);
     if (results.countEntities() == 0) {
         Entity userEntity = new Entity("User");
+        long timestamp = System.currentTimeMillis();
         userEntity.setProperty("userEmail", userEmail);
+        userEntity.setProperty("timestamp", timestamp);
         datastore.put(userEntity);
     }
 
