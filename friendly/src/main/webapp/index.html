@@ -10,6 +10,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var sub = $("#sub");
+        sub.click(function(){
+            var data_json = $("#groupform").serialize();
+            $.post("/group", data_json, function(data, status){
+                if (data.trim() === 'valid') {
+                    location.reload(true);
+                }
+                else { 
+                    alert("User does not exist");
+                }
+            });
+        });
+    });
+    </script>
   </head>
 
   <body onload="getLoginStatus();">
@@ -26,24 +42,55 @@
 
             <!-- Modal content -->
             <div class="modal-content">
-                <form action="/group" method="POST" class="form-container">
+                <form class="form-container" id="groupform">
                     <h1> Create A New Group</h1>
                     <label for="GroupName"><b>Group Name</b></label>
                     <input type="text" placeholder="Enter Group Name" name="groupName" required>
                     <label for="TeamMembers"><b>Team Members</b></label>
                     <input type="text" placeholder="Enter Team member's email: using ';' to separate different members" name="teamMembers">
-                    <button type="submit" class="btn">Create</button>
+                    <button type="button" id="sub" class="btn">Create</button>
                     <button type="button" class="btn cancel" onclick="closeGroupForm()">Close</button> 
                 </form>
             </div>
 
         </div>
 
+
         <div id="data">
-            <select id="groups-list" />
+            <select id="groups-list"></select>
         </div>
 
+        <div id="recommendation-container">
+            <button id="add-recommendation" onclick="createRecommendationForm()">Add New Recommendation</button>
+            <div id="recommendationModal" class="modal">
+                <div class="modal-content">
+                    <form action="/recommendation" method="POST" class="form-container">
+                        <h1> Recommend a new restaurant </h1>
+                        <label for="RestaurantName"><b>Restaurant Name</b></label>
+                        <input type="hidden" name="groupId" id="groupIdInput">
+                        <input type="hidden" name="userEmail" id="userEmailInput">
+                        <input type="text" placeholder="Enter Restaurant Name" name="restaurantName" required>
+                        <label for="Location"><b>Location  </b></label>
+                        <select name="location">
+                            <option value="North">North</option>
+                            <option value="South">South</option>
+                            <option value="East">East</option>
+                            <option value="West">West</option>
+                        </select>
+                        <br>
+                        <button type="submit" class="btn">Add Recommendation</button>
+                        <button type="button" class="btn cancel" onclick="closeRecommendationForm()">Close</button> 
+                    </form>
+                </div>
+            </div>
+            <div id="recommendation-list"></div>
+        </div>
     </div>
+
+
+        
+        
+
 
   </body>
 
