@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
+
     <script type="text/javascript">
     $(document).ready(function(){
         var sub = $("#sub");
@@ -20,7 +21,27 @@
                     location.reload(true);
                 }
                 else { 
-                    alert("User does not exist");
+                    alert(data);
+                }
+            });
+        });
+    });
+    </script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var del = $("#del");
+        del.click(function(){
+            $.ajax({
+                url: '/group' + '?groupName=' + $("#groupName").val(),
+                type: 'DELETE',
+                success: function(data) {
+                    alert(data);
+                    location.reload(true);
+                },
+                error: function(data) {
+                    alert(data);
+                    location.reload(true);
                 }
             });
         });
@@ -43,7 +64,7 @@
             <!-- Modal content -->
             <div class="modal-content">
                 <form class="form-container" id="groupform">
-                    <h1> Create A New Group</h1>
+                    <h1>Create A New Group</h1>
                     <label for="GroupName"><b>Group Name</b></label>
                     <input type="text" placeholder="Enter Group Name" name="groupName" required>
                     <label for="TeamMembers"><b>Team Members</b></label>
@@ -60,6 +81,22 @@
             <select id="groups-list"></select>
         </div>
 
+        <div id="delete-group-container">
+            <button id="delete-group" type="button" class="deletebtn" onclick="createDeleteForm()">Delete group</button>
+                  
+            <div id="deleteModal" class="modal">
+                <div class="delete-modal-content">
+                    <form class="form-container" id="deleteform">
+                        <h1>Delete Group</h1>
+                        <h3>Are you sure you want to delete the group?</h3>
+                        <p>This will also delete all recommendations corresponding to this group. This action is irreversible.</p>
+                        <button type="button" id="del" class="btn">Delete</button>
+                        <button type="button" class="btn cancel" onclick="closeDeleteForm()">Close</button> 
+                    </form>
+                </div>
+            </div>
+        </div>
+
         <div id="recommendation-container">
             <button id="add-recommendation" onclick="createRecommendationForm()">Add New Recommendation</button>
             <div id="recommendationModal" class="modal">
@@ -67,8 +104,7 @@
                     <form action="/recommendation" method="POST" class="form-container">
                         <h1> Recommend a new restaurant </h1>
                         <label for="RestaurantName"><b>Restaurant Name</b></label>
-                        <input type="hidden" name="groupId" id="groupIdInput">
-                        <input type="hidden" name="userEmail" id="userEmailInput">
+                        <input type="hidden" name="groupName" id="groupNameInput">
                         <input type="text" placeholder="Enter Restaurant Name" name="restaurantName" required>
                         <label for="Location"><b>Location  </b></label>
                         <select name="location">
@@ -86,11 +122,6 @@
             <div id="recommendation-list"></div>
         </div>
     </div>
-
-
-        
-        
-
 
   </body>
 

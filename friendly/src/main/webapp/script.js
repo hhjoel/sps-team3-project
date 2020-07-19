@@ -25,7 +25,6 @@ function getLoginStatus() {
                 loginElement.innerHTML = '<h4> Hello, ' + loginStatus.userEmail + '!</h4>'
                 loginElement.appendChild(createRedirectButtonElement(loginStatus.logoutUrl, 'logout'));
                 groupElement.style.display = "block";
-                document.getElementById('userEmailInput').value = loginStatus.userEmail;
                 getUserGroups(loginStatus.userEmail);
         }
         else {
@@ -40,7 +39,7 @@ function getLoginStatus() {
 /**
  * This function will query user's group list
  */
-function getUserGroups(userEmail) {
+function getUserGroups() {
     fetch('/group').then(response => response.json()).then((groupList) => {
         const groupData = document.getElementById("data");
         if (groupList.length === 0) {
@@ -49,11 +48,12 @@ function getUserGroups(userEmail) {
         else {
             groupData.innerHTML = ('<h4>Your groups: </h4>');
             groupDropdown = document.createElement('select');
-            groupDropdown.setAttribute("id", "groupId");
-            groupDropdown.setAttribute("onchange","getRecommendationContainer()"); 
+            groupDropdown.setAttribute("id", "groupName");
+            groupDropdown.setAttribute("onchange","getRecommendationContainer(); getDeleteGroupContainer();",); 
             groupList.map(group => createDropdown(group)).map(element => groupDropdown.appendChild(element));
             groupData.appendChild(groupDropdown);
             getRecommendationContainer();
+            getDeleteGroupContainer();
         }
     })
 }
@@ -73,7 +73,17 @@ function createGroupForm() {
 }
 
 function closeGroupForm() {
-    var modal=document.getElementById("groupModal");
+    var modal = document.getElementById("groupModal");
+    modal.style.display ="none";
+}
+
+function createDeleteForm() {
+    var modal = document.getElementById("deleteModal");
+    modal.style.display = "block";
+}
+
+function closeDeleteForm() {
+    var modal = document.getElementById("deleteModal");
     modal.style.display ="none";
 }
 
@@ -98,11 +108,11 @@ function closeRecommendationForm() {
  */
 function getRecommendationContainer() {
 
-    //Get selected groupid & pass to recommendation form as hidden input 
-    groupList = document.getElementById('groupId')
+    //Get selected group name & pass to recommendation form as hidden input 
+    groupList = document.getElementById('groupName')
     if (groupList != null) {
-        groupId = groupList.options[groupList.selectedIndex].text;
-        document.getElementById('groupIdInput').value = groupId;
+        groupName = groupList.options[groupList.selectedIndex].text;
+        document.getElementById('groupNameInput').value = groupName;
         document.getElementById('recommendation-container').style.display = "block";
         getRecommendations()
     }
@@ -113,12 +123,11 @@ function getRecommendationContainer() {
  */
 function getRecommendations() {
 
-    //Retrieve the groupId & userEmail
-    groupId = document.getElementById('groupIdInput').value;
-    userEmail = document.getElementById('userEmailInput').value;
+    //Retrieve the groupName
+    groupName = document.getElementById('groupNameInput').value;
 
-    //Adding groupId to Query String
-    query = '/recommendation' + '?userEmail=' + userEmail + '&groupId='+ groupId ;
+    //Adding groupName to Query String
+    query = '/recommendation' + '?groupName='+ groupName ;
     
     fetch(query).then(response => response.json()).then(recommendations => { 
 
@@ -126,12 +135,22 @@ function getRecommendations() {
         recommendationElement.innerHTML = "";
 
         //Convert each recommendation to html list
-        recommendations.forEach(text => {
-        const liElement = document.createElement('li');
-        liElement.innerText = text;
-        recommendationElement.append(liElement);
+        recommendations.forEach(recommendation => {
+            const liElement = document.createElement('li');
+            liElement.innerText = recommendation.restaurantName + " " + recommendation.location;
+            recommendationElement.append(liElement);
       });
         
     }); 
+}
 
+/**
+ * This function will show the delete button when there are groups
+ */
+function getDeleteGroupContainer() {
+    // Get whether there are groups or no groups
+    groupList = document.getElementById('groupName')
+    if (groupList != null) {
+        document.getElementById('delete-group-container').style.display = "block";
+    }
 }

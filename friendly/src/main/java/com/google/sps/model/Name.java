@@ -5,7 +5,7 @@ package com.google.sps.model;
  */
 public class Name {
     private static final String MESSAGE_CONSTRAINTS = "Names should only contain at least 1 alphanumeric character";
-    private static final String VALIDATION_REGEX = "[A-Za-z0-9]+";
+    private static final String VALIDATION_REGEX = "[A-Za-z0-9 ]+";
     private final String name;
 
     public Name(String name) throws InvalidNameException{
