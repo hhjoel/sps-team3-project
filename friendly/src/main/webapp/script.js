@@ -19,12 +19,13 @@ function getLoginStatus() {
         console.log(loginStatus);
         const loginElement = document.getElementById('login');
         const groupElement = document.getElementById('groups');
+        
         loginElement.innerHTML = '<h4>Login Status: '+ loginStatus.loginStatus + '</h4>';
         if (loginStatus.loginStatus){
                 loginElement.innerHTML = '<h4> Hello, ' + loginStatus.userEmail + '!</h4>'
                 loginElement.appendChild(createRedirectButtonElement(loginStatus.logoutUrl, 'logout'));
                 groupElement.style.display = "block";
-                getUserGroups();
+                getUserGroups(loginStatus.userEmail);
         }
         else {
             loginElement.innerHTML = '<h4> Log in to view your groups </h4>'
@@ -47,8 +48,12 @@ function getUserGroups() {
         else {
             groupData.innerHTML = ('<h4>Your groups: </h4>');
             groupDropdown = document.createElement('select');
+            groupDropdown.setAttribute("id", "groupName");
+            groupDropdown.setAttribute("onchange","getRecommendationContainer(); getDeleteGroupContainer();",); 
             groupList.map(group => createDropdown(group)).map(element => groupDropdown.appendChild(element));
             groupData.appendChild(groupDropdown);
+            getRecommendationContainer();
+            getDeleteGroupContainer();
         }
     })
 }
@@ -68,7 +73,17 @@ function createGroupForm() {
 }
 
 function closeGroupForm() {
-    var modal=document.getElementById("groupModal");
+    var modal = document.getElementById("groupModal");
+    modal.style.display ="none";
+}
+
+function createDeleteForm() {
+    var modal = document.getElementById("deleteModal");
+    modal.style.display = "block";
+}
+
+function closeDeleteForm() {
+    var modal = document.getElementById("deleteModal");
     modal.style.display ="none";
 }
 
@@ -76,4 +91,66 @@ function createDropdown(text) {
     const dropdownElement = document.createElement('option');
     dropdownElement.innerText = text;
     return dropdownElement;
+}
+
+function createRecommendationForm() {
+    var modal = document.getElementById("recommendationModal");
+    modal.style.display = "block";
+}
+
+function closeRecommendationForm() {
+    var modal=document.getElementById("recommendationModal");
+    modal.style.display = "none";
+}
+
+/**
+ * This function will show the recommendation container: recommendation list and add recommendation button
+ */
+function getRecommendationContainer() {
+
+    //Get selected group name & pass to recommendation form as hidden input 
+    groupList = document.getElementById('groupName')
+    if (groupList != null) {
+        groupName = groupList.options[groupList.selectedIndex].text;
+        document.getElementById('groupNameInput').value = groupName;
+        document.getElementById('recommendation-container').style.display = "block";
+        getRecommendations()
+    }
+}
+
+/**
+ * This function will query the group's recommendations
+ */
+function getRecommendations() {
+
+    //Retrieve the groupName
+    groupName = document.getElementById('groupNameInput').value;
+
+    //Adding groupName to Query String
+    query = '/recommendation' + '?groupName='+ groupName ;
+    
+    fetch(query).then(response => response.json()).then(recommendations => { 
+
+        const recommendationElement = document.getElementById("recommendation-list");
+        recommendationElement.innerHTML = "";
+
+        //Convert each recommendation to html list
+        recommendations.forEach(recommendation => {
+            const liElement = document.createElement('li');
+            liElement.innerText = recommendation.restaurantName + " " + recommendation.location;
+            recommendationElement.append(liElement);
+      });
+        
+    }); 
+}
+
+/**
+ * This function will show the delete button when there are groups
+ */
+function getDeleteGroupContainer() {
+    // Get whether there are groups or no groups
+    groupList = document.getElementById('groupName')
+    if (groupList != null) {
+        document.getElementById('delete-group-container').style.display = "block";
+    }
 }

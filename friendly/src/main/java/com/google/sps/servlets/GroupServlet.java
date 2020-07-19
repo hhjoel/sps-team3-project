@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/group")
 public class GroupServlet extends HttpServlet {
   
@@ -50,7 +49,8 @@ public class GroupServlet extends HttpServlet {
 
     // user not logged in, do not have groups
     if (!userService.isUserLoggedIn()){
-        response.sendError(403, "Not authorized to comment.");
+        response.sendError(response.SC_FORBIDDEN);
+        response.getWriter().write("Not authorized to comment.");
         return;
     }
     String ownerEmail = userService.getCurrentUser().getEmail();
@@ -80,6 +80,22 @@ public class GroupServlet extends HttpServlet {
     String ownerEmail = userService.getCurrentUser().getEmail();
     String teamMembers = getParameter(request, "teamMembers");
     ArrayList<String> members = new ArrayList<String>(Arrays.asList(teamMembers.split(";")));
+    response.setContentType("text/plain;charset=UTF-8");
+
+    for (String userEmail: members) {
+        if (!validateGroupUser(userEmail)) {
+            response.getWriter().println("User does not exist."); 
+            return; 
+        }
+    }
+
+    // check group name is unique
+    if (!validateGroupName(groupName)) {
+        response.getWriter().println("Group name must be unique. Please choose another name."); 
+        return; 
+    }
+
+    response.getWriter().println("valid"); 
     members.add(ownerEmail);
 
     if (!groupName.isEmpty()) {
@@ -92,10 +108,55 @@ public class GroupServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(groupEntity);
     }
-    // Redirect back to the HTML page.
-    // 
-    response.sendRedirect("/index.html");
   }
+
+    @Override
+    public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        UserService userService = UserServiceFactory.getUserService();
+
+        // user not logged in, can not delete 
+        if (!userService.isUserLoggedIn()){
+            response.sendError(response.SC_FORBIDDEN);
+            response.getWriter().write("Not authorized to delete group.");
+            return;
+        }
+
+        String groupName = request.getParameter("groupName");
+        String userEmail = userService.getCurrentUser().getEmail();
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        
+        Query groupQuery = new Query("Group")
+            .setFilter(new FilterPredicate("groupName", FilterOperator.EQUAL, groupName))
+            .setFilter(new FilterPredicate("ownerEmail", FilterOperator.EQUAL, userEmail));
+        PreparedQuery groupResult = datastore.prepare(groupQuery);
+
+        // Retrieve one and only result
+        Entity groupEntity = groupResult.asSingleEntity();
+
+        // Not the owner
+        if (groupEntity == null) {
+            response.setStatus(response.SC_ACCEPTED);
+            response.getWriter().write("You do not have permission to do this. Please contact your group owner.");
+            return;
+        }
+
+        // Delete group
+        datastore.delete(groupEntity.getKey());
+
+        // Delete recommendations in that group
+        Query recommendationsQuery = new Query("Recommendations")
+            .setFilter(new FilterPredicate("groupName", FilterOperator.EQUAL, groupName));
+        PreparedQuery recommendationResults = datastore.prepare(recommendationsQuery);
+
+        for (Entity recommendationEntity : recommendationResults.asIterable()) {
+            datastore.delete(recommendationEntity.getKey());
+        }
+
+        response.setStatus(response.SC_OK); 
+        response.getWriter().write("The group has been deleted succesfully.");
+    }
 
 /**
   * Get parameter from user input.
@@ -103,6 +164,30 @@ public class GroupServlet extends HttpServlet {
   private String getParameter(HttpServletRequest request, String name) {      
       String parameter = request.getParameter(name);
       return parameter;
+  }
+
+/**
+  * Check whether a userEmail is valid (the user is in the datastore)
+  */
+  private boolean validateGroupUser(String userEmail) {
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("User")
+        .setFilter(new FilterPredicate("userEmail", FilterOperator.EQUAL, userEmail));
+    PreparedQuery results = datastore.prepare(query);
+    return results.countEntities() != 0;
+  }
+
+/**
+  * groupName must be unique. returns true if valid and false if not.
+  */
+  private boolean validateGroupName(String groupName) {
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Query query = new Query("Group")
+        .setFilter(new FilterPredicate("groupName", FilterOperator.EQUAL, groupName));
+    PreparedQuery results = datastore.prepare(query);
+    return results.countEntities() == 0;
   }
 
 }

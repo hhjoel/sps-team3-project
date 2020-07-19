@@ -2,6 +2,14 @@
     display: none /* Hidden by default */
 }
 
+#recommendation-container {
+    display: none /* Hidden by default */
+}
+
+#delete-group-container {
+    display: none /* Hidden by default */
+}
+
 /* The Modal (background) */
 .modal {
   display: none; /* Hidden by default */
